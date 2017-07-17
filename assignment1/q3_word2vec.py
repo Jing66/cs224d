@@ -165,7 +165,12 @@ def cbow(currentWord, C, contextWords, tokens, inputVectors, outputVectors,
     gradOut = np.zeros(outputVectors.shape)
 
     ### YOUR CODE HERE
-    pass
+    center = tokens[currentWord]
+    vhat = sum(inputVectors[tokens[j]] for j in contextWords)
+    cost, grad_predicted, gradOut = word2vecCostAndGradient(vhat, center, outputVectors, dataset)
+    for j in contextWords:
+      gradIn[tokens[j]] += grad_predicted
+
     ### END YOUR CODE
     
     return cost, gradIn, gradOut

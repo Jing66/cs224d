@@ -54,7 +54,8 @@ class SoftmaxModel(Model):
     (Don't change the variable names)
     """
     ### YOUR CODE HERE
-    raise NotImplementedError
+    self.input_placeholder = tf.placeholder(tf.float32, shape=[None, self.config.n_features], name="inputs")
+    self.labels_placeholder = tf.placeholder(tf.float32, shape=[None, self.config.n_classes], name="labels") 
     ### END YOUR CODE
 
   def create_feed_dict(self, input_batch, label_batch):
@@ -79,7 +80,10 @@ class SoftmaxModel(Model):
       feed_dict: The feed dictionary mapping from placeholders to values.
     """
     ### YOUR CODE HERE
-    raise NotImplementedError
+    feed_dict = {
+      self.input_placeholder:input_batch,
+      self.labels_placeholder: label_batch
+    }
     ### END YOUR CODE
     return feed_dict
 
@@ -103,7 +107,9 @@ class SoftmaxModel(Model):
       train_op: The Op for training.
     """
     ### YOUR CODE HERE
-    raise NotImplementedError
+
+    optimizer = tf.train.GradientDescentOptimizer(1e-4)
+    train_op = optimizer.minimize(loss)
     ### END YOUR CODE
     return train_op
 
@@ -127,7 +133,11 @@ class SoftmaxModel(Model):
       out: A tensor of shape (batch_size, n_classes)
     """
     ### YOUR CODE HERE
-    raise NotImplementedError
+    with tf.variable_scope("model"):
+        W = tf.get_variable("W", shape=[self.config.n_features, self.config.n_classes], initializer=tf.random_normal_initializer(0.5, 0.1))
+        b = tf.get_variable("b", shape=[self.config.n_classes], initializer=tf.constant_initializer(0.0))
+        affine_transformation = tf.matmul(self.input_placeholder, W) + b
+    out = softmax(affine_transformation)
     ### END YOUR CODE
     return out
 
@@ -142,7 +152,7 @@ class SoftmaxModel(Model):
       loss: A 0-d tensor (scalar)
     """
     ### YOUR CODE HERE
-    raise NotImplementedError
+    loss = cross_entropy_loss(self.labels_placeholder, pred)
     ### END YOUR CODE
     return loss
 
